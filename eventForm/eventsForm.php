@@ -166,20 +166,16 @@ $validForm = false;
 			$conn = null;
 			?>
 			<div id="container">
-				<h1 class="projectTitle">WDV 341: Form Page for Events</h1>
-				<p>&nbsp;</p>
-				<h1>Thank You for Your Event Information!</h1>
-				<h2>Your event information has been placed  into our database!</h2>
-				<p>&nbsp;</p>
+				<h1>Event Submitted</h1>
 			</div>
 			<?php
 		}
 		else
 		{
 			?>
-			<!--Form with Event Name, Description, Presenter, Date, and Time -->
+			<!-- FORM -->
 			<div id="container">
-				<h1 class="projectTitle">WDV 341: Form Page for Events</h1>
+				<h1 >WDV 341: Form Page for Events</h1>
 
 				<form name="form1" method="post" action="eventsForm.php">
 					<p>Event Name:<br> <span class="error"><?php echo$eventNameError?></span><input type="text" name="eventName" id="eventName" value="<?php echo$eventName?>"></p>
