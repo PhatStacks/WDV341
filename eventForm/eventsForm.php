@@ -87,6 +87,28 @@ $validForm = false;
 			validateDate();
 			validateTime();
 		}
+
+
+		$verify_url = 'https://www.google.com/recaptcha/api/siteverify';
+		$args = array('secret' => '6LeAIFYUAAAAACPowlK1PHPty644Jw36gFTdXeKY',
+			'response' => $_POST['g-recaptcha'],
+			'remoteip' => $_SERVER['REMOTE_ADDR']);
+		$request_url = $verify_url.'?'.http_build_query($args);
+		
+			// a JSON object is returned
+					$response = file_get_contents($request_url);
+					
+			// decode the information
+			$json = json_decode($response, true); // true decodes it to an array instead of a PHP object
+
+
+
+			// handle the response
+			if($recaptcha['success'] == 1) {
+				// run code on successful reCAPTCHA
+			} else {
+				// run code on unsuccessful reCAPTCHA
+			}
 		?>
 
 		<!DOCTYPE html>
@@ -94,6 +116,8 @@ $validForm = false;
 		<head>
 
 			<title>WDV 341: Form Page for Events</title>
+
+			<script src='https://www.google.com/recaptcha/api.js'></script>
 
 			<style>
 
@@ -174,6 +198,8 @@ $validForm = false;
 					<p>Event Date (yyyy-mm-dd):<br><span class="error"><?php echo$eventDateError?></span><input type="text" name="eventDate" id="eventDate" value="<?php echo$inEventDate?>"></p>
 
 					<p>Event Start Time (hh:mm):<br><span class="error"><?php echo$eventTimeError?></span><input type="text" name="eventTime" id="eventTime" value="<?php echo$inEventTime?>"></p>
+
+					<div class="g-recaptcha" data-sitekey="6LeAIFYUAAAAACVyI_xUk1ePfihhR4Ka0ODG-syk"></div>
 
 					<p><input type="submit" name="submit" value="Submit Information">
 						<input type="reset" name="reset" value="Reset Information">
