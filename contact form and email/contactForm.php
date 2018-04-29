@@ -7,13 +7,13 @@ $list = isset($_POST["list"]);
 $sendMore = isset($_POST["sendMore"]);
 $sendFail = "";
 $sendSuccess = "";
-$fail = "";
+
 
 
 
 if ($list == TRUE)
 {
-	$listLine = "You're now included into our email list!\r\n\n";
+	$listLine = "You're now in our email list!\r\n";
 }
 else
 {
@@ -21,7 +21,7 @@ else
 }
 if ($sendMore == TRUE)
 {
-		$sendMoreLine = "More information of our products is on your way!\r\n\n";
+		$sendMoreLine = "More information of our products is on your way!\r\n";
 }
 else
 {
@@ -31,18 +31,18 @@ $to = $_POST["email"];
 $to .= ",luongphat7@gmail.com";
 $subject = "Contact Form Confirmation";
 $from = "from: contact@phatluong.com";
-$message = " Dear $name,\r\n\n Thank you for taking the time to fill out our contact form. We understand that you have a comment regarding the $reason category.\r\n\n Your comments are incredibly valuable to us and we will get back to you in a prompt and orderly fashion using the information your provided for us.\r\n\n$listLine$sendMoreLine Thank You!\r\n\n THE INFORMATION YOU PROVIDED:\r\n\nName: $name\r\n\nEmail: $email\r\n\nReason: $reason\r\n\nYour Comment: $comment";
+$message = " Dear $name,\r\n Thank you for taking the time to fill out our contact form. We understand that you have a comment regarding the $reason category.\r\n$listLine$sendMoreLine Thank You!\r\n THE INFORMATION YOU PROVIDED:\r\nName: $name\r\nEmail: $email\r\nReason: $reason\r\nYour Comment: $comment";
 if (mail($to, $subject, $message, $from))
 {
-	$sendSuccess = "Your information was successfully sent! Thank you for your time!";
+	$sendSuccess = "Your information has sent through!";
 	$sendFail = "";
 }
 else
 {
 	
-	$sendFail = "Uh-Oh! Something happened and your information was not sent. Please try again :(";
+	$sendFail = "Error, Please try again ";
 	$sendSuccess = " ";
-	$fail = "fail";
+	
 	
 }	
 
