@@ -1,10 +1,10 @@
 <?php
 //variables to filled from form
-$inEventName = "";
-$inEventDescription = "";
-$inEventPresenter = "";
-$inEventDate = "";
-$inEventTime = "";
+$eventName = "";
+$eventDescription = "";
+$eventPresenter = "";
+$eventDate = "";
+$eventTime = "";
 	//variables to hold error messages
 $eventNameError = "";
 $eventDescriptionError = "";
@@ -16,9 +16,9 @@ $validForm = false;
 //form validation functions
 		function validateName() //Event Name must be included
 		{
-			global $inEventName, $eventNameError, $validForm;
+			global $eventName, $eventNameError, $validForm;
 			
-			if($inEventName == "")
+			if($eventName == "")
 			{
 				$validForm = false;
 				$eventNameError = "Please enter the name of the event.<br>";
@@ -26,9 +26,9 @@ $validForm = false;
 		}
 		function validateDescription() //Event Description must be included
 		{
-			global $inEventDescription, $eventDescriptionError, $validForm;
+			global $eventDescription, $eventDescriptionError, $validForm;
 			
-			if($inEventDescription == "")
+			if($eventDescription == "")
 			{
 				$validform = false;
 				$eventDescriptionError = "Please enter a description of the event.<br>";
@@ -36,47 +36,44 @@ $validForm = false;
 		}
 		function validatePresenter() //Event Presenter must be included
 		{
-			global $inEventPresenter, $eventPresenterError, $validForm;
+			global $eventPresenter, $eventPresenterError, $validForm;
 			
-			if($inEventPresenter =="")
+			if($eventPresenter =="")
 			{
 				$validForm = false;
 				$eventPresenterError = "Please enter the name of the event presenter.<br>";
 			}
 		}
-		function validateDate() //Event Date must be in yyyy-mm-dd format
+		function validateDate() //Event Date validation
 		{
-			global $inEventDate, $eventDateError, $validForm;
+			global $eventDate, $eventDateError, $validForm;
 			
-			$date_regex = '/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/'; // yyyy-mm-dd
-			
-			if (!preg_match($date_regex, $inEventDate))
+			if ($eventDate == " ")
 			{
 				$validForm = false;
-				$eventDateError = "Please enter your event date in the yyyy-mm-dd format.<br>";
+				$eventDateError = "Please enter your event date.<br>";
 			}		
 		}
 		function validateTime() //Event Start Time must be in hh:mm 
 		{
-			global $inEventTime, $eventTimeError, $validForm;
+			global $eventTime, $eventTimeError, $validForm;
 			
-			$time_regex = '/^(?:1[012]|0[0-9]):[0-5][0-9]$/'; //hh:mm 
 			
-			if(!preg_match($time_regex, $inEventTime))
+			if($eventTime == "" )
 			{
 				$validForm = false;
-				$eventTimeError = "Please enter your event time in the HH:MM  format.<br>";
+				$eventTimeError = "Please enter your event time.<br>";
 			}
 		}
 		//function to determine if the "submit" button has been pressed (a form has been submitted)
 		if(isset($_POST["submit"]))
 		{
 			//fill variables from form
-			$inEventName = $_POST["eventName"];
-			$inEventDescription = $_POST["eventDescription"];
-			$inEventPresenter = $_POST["eventPresenter"];
-			$inEventDate = $_POST["eventDate"];
-			$inEventTime = $_POST["eventTime"];
+			$eventName = $_POST["eventName"];
+			$eventDescription = $_POST["eventDescription"];
+			$eventPresenter = $_POST["eventPresenter"];
+			$eventDate = $_POST["eventDate"];
+			$eventTime = $_POST["eventTime"];
 			//assume the form is valid before validating
 			$validForm = true;
 			
@@ -87,7 +84,6 @@ $validForm = false;
 			validateDate();
 			validateTime();
 		}
-
 
 		$verify_url = 'https://www.google.com/recaptcha/api/siteverify';
 		$args = array('secret' => '6LeAIFYUAAAAACPowlK1PHPty644Jw36gFTdXeKY',
@@ -109,6 +105,7 @@ $validForm = false;
 			} else {
 				// run code on unsuccessful reCAPTCHA
 			}
+
 		?>
 
 		<!DOCTYPE html>
@@ -118,6 +115,8 @@ $validForm = false;
 			<title>WDV 341: Form Page for Events</title>
 
 			<script src='https://www.google.com/recaptcha/api.js'></script>
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+			<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 			<style>
 
@@ -157,11 +156,6 @@ $validForm = false;
 				$stmt->bindParam(':eventDate', $eventDate);
 				$stmt->bindParam(':eventTime', $eventTime);
 				
-				$eventName = $inEventName;
-				$eventDescription = $inEventDescription;
-				$eventPresenter = $inEventPresenter;
-				$eventDate = $inEventDate;
-				$eventTime = $inEventTime;
 				$stmt->execute();
 			}
 			catch(PDOException $e)
@@ -188,18 +182,19 @@ $validForm = false;
 				<h1 class="projectTitle">WDV 341: Form Page for Events</h1>
 
 				<form name="form1" method="post" action="eventsForm.php">
-					<p>Event Name:<br> <span class="error"><?php echo$eventNameError?></span><input type="text" name="eventName" id="eventName" value="<?php echo$inEventName?>"></p>
+					<p>Event Name:<br> <span class="error"><?php echo$eventNameError?></span><input type="text" name="eventName" id="eventName" value="<?php echo$eventName?>"></p>
 
-					<p>Event Description:<br><span class="error"><?php echo$eventDescriptionError?></span><textarea name="eventDescription" id="eventDescription" cols="45" rows="5"><?php echo$inEventDescription?></textarea></p>
+					<p>Event Description:<br><span class="error"><?php echo$eventDescriptionError?></span><textarea name="eventDescription" id="eventDescription" cols="45" rows="5"><?php echo$eventDescription?></textarea></p>
 
 
-					<p>Event Presenter:<br><span class="error"><?php echo$eventPresenterError?></span><input type="text" name="eventPresenter" id="eventPresenter" value="<?php echo$inEventPresenter?>"></p>
+					<p>Event Presenter:<br><span class="error"><?php echo$eventPresenterError?></span><input type="text" name="eventPresenter" id="eventPresenter" value="<?php echo$eventPresenter?>"></p>
 
-					<p>Event Date (yyyy-mm-dd):<br><span class="error"><?php echo$eventDateError?></span><input type="text" name="eventDate" id="eventDate" value="<?php echo$inEventDate?>"></p>
+					<p>Event Date (yyyy-mm-dd):<br><span class="error"><?php echo$eventDateError?></span><input type="date" name="eventDate" id="eventDate" value="<?php echo$eventDate?>"></p>
 
-					<p>Event Start Time (hh:mm):<br><span class="error"><?php echo$eventTimeError?></span><input type="text" name="eventTime" id="eventTime" value="<?php echo$inEventTime?>"></p>
+					<p>Event Start Time (hh:mm):<br><span class="error"><?php echo$eventTimeError?></span><input type="time" name="eventTime" id="eventTime" value="<?php echo$eventTime?>"></p>
 
 					<div class="g-recaptcha" data-sitekey="6LeAIFYUAAAAACVyI_xUk1ePfihhR4Ka0ODG-syk"></div>
+
 
 					<p><input type="submit" name="submit" value="Submit Information">
 						<input type="reset" name="reset" value="Reset Information">
