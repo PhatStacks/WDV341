@@ -1,5 +1,8 @@
 <?php
 //variables to filled from form
+session_start();
+if ($_SESSION['validUser'] == "yes"){
+
 $eventName = "";
 $eventDescription = "";
 $eventPresenter = "";
@@ -164,6 +167,10 @@ $validForm = false;
 			}
 			
 			$conn = null;
+	}
+	else{
+		header('Location: login.php');
+	}
 			?>
 			<div id="container">
 				<h1>Event Submitted</h1>
