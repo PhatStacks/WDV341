@@ -15,7 +15,7 @@ $inUsername = $_SESSION['userName'];
       
       include 'connection.php';               //Connect to the database
 
-      $sql = "SELECT user_name,user_password FROM product_user WHERE user_name = :username AND user_password = :password";        
+      $sql = "SELECT event_user_name,event_user_password FROM event_user WHERE event_user_name = :username AND event_user_password = :password";   
       
       $query = $conn->prepare($sql);                 //prepare the query
       
@@ -29,12 +29,12 @@ $inUsername = $_SESSION['userName'];
       if ($query->rowCount() == 1 ){               //If this is a valid user there should be ONE row only
       
         $_SESSION['validUser'] = "yes";       //this is a valid user so set your SESSION variable
-        $message = "Welcome Back <em>". $inUsername."</em> !";
+        $messageSuccess = "Welcome Back <em>". $inUsername."</em> !";
         
       }else{
         
         $_SESSION['validUser'] = "no";        //error in login, not valid user  
-        $message = "<em>Username or Password is incorrect. <br>Please try again.</em>";
+        $messageError = "<em>Username or Password is incorrect. <br>Please try again.</em>";
       }     
       
       $conn = null;
@@ -74,6 +74,10 @@ $inUsername = $_SESSION['userName'];
 
   <body id="page-top">
 
+<?php
+  if ($_SESSION['validUser'] == "yes"){ //This is a valid user.  Show them the Administrator Page 
+?>
+
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
       <div class="container">
@@ -93,43 +97,109 @@ $inUsername = $_SESSION['userName'];
             <li class="nav-item mx-0 mx-lg-1">
               <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="contactForm.html">Contact</a>
             </li>
+            <li><a id ="greeting"> <?php echo $messageSuccess;?></a></li>
             <li class="nav-item mx-0 mx-lg-1">
               <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="login.php">login</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="logout.php">logout</a>
             </li>
           </ul>
         </div>
       </div>
     </nav>
 
-    <div class = "container">
-  
-  <h2><?php echo $message?></h2>
 
-<?php
-  if ($_SESSION['validUser'] == "yes"){ //This is a valid user.  Show them the Administrator Page 
-?>
-    <div>
-      <h2>Administrator Options</h2>
-      <p><a href="addProduct.php" >Add Event</a></p>
-      <p><a href="selectProduct.php">View Events</a></p>
-      <p><a href="logout.php">logout</a></p>  
-        </div>          
+
+   <!-- Header -->
+    <header class="masthead bg-primary text-white text-center">
+      <div class="container">
+        <button><a href="addProduct.php" >Add Product</a></button>
+        <button><a href="selectProduct.php" >view Product</a></button>
+      </div>
+    </header>
+
+
 <?php
   }else{  //The user needs to log in.  Display the Login Form
 ?>
-    <div>
-      <h2>Administrator Login</h2>
+
+<!-- Navigation -->
+    <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">Friendly Barber</a>
+        <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="main.php">Portfolio</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#about">About</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="contactForm.html">Contact</a>
+            </li>
+            <li><a id ="greeting"> <?php echo $messageSuccess;?></a></li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="login.php">login</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="logout.php">logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Login form -->
+<header class="masthead bg-primary text-white text-center">
+  <div class="container">
+    <div> 
+      <h2>Administrator Login <?php echo $messageError;?></h2>
             <form method="post" name="loginForm" action="login.php" >
                 <p class="label">Username:</p> <input name="user_name" type="text" />
                 <p class="label">Password:</p> <input name="user_password" type="password" />
                 <p><input name="submitLogin" value="LOGIN" type="submit" /> <input name="" type="reset" value="RESET"/>&nbsp;</p>
             </form>
     </div>
+  </div>
+</header>
                 
+
+<!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
+    <div class="scroll-to-top d-lg-none position-fixed ">
+      <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top">
+        <i class="fa fa-chevron-up"></i>
+      </a>
+    </div>
+
 <?php 
   }  //end of checking for a valid user     
 ?>
-</div>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+    <!-- Contact Form JavaScript -->
+    <script src="js/jqBootstrapValidation.js"></script>
+    <script src="js/contact_me.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/freelancer.min.js"></script>
 
 </body>
 </html>
+
+
+
+
+

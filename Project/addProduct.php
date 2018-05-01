@@ -1,20 +1,33 @@
 <?php
-//variables to filled from form
 
-$productName = "";
-$productDescription = "";
-$productPrice = "";
+	session_start();
 
-	//variables to hold error messages
-$productNameError = "";
-$productDescriptionError = "";
-$productPriceError = "";
+	$inUsername = $_SESSION['userName']; //get user
 
-	include 'connection.php';
+	if($_SESSION['validUser'] == "yes") { //if valid user , already signed in
 
-	//variable to determine if form is valid( initially set to "false" to return an invalid (initally blank) form)
-$validForm = false;
-//form validation functions
+		$messageSuccess = "Welcome back $inUsername ";
+
+		
+
+		include 'connection.php';
+
+	//variables to filled from form
+	$productName = "";
+	$productDescription = "";
+	$productPrice = "";
+
+		//variables to hold error messages
+	$productNameError = "";
+	$productDescriptionError = "";
+	$productPriceError = "";
+
+	$displayMsg ="";
+	$displayErrorMsg ="";
+
+		//variable to determine if form is valid( initially set to "false" to return an invalid (initally blank) form)
+	$validForm = false;
+	//form validation functions
 		function validateName() //Event Name must be included
 		{
 			global $productName, $productNameError, $validForm;
@@ -39,7 +52,7 @@ $validForm = false;
 		{
 			global $productPrice, $productPriceError, $validForm;
 			
-			if($productPrice =="")
+			if($productPrice <="")
 			{
 				$validForm = false;
 				$productPriceError = "Please enter the name of the event presenter.<br>";
@@ -49,8 +62,7 @@ $validForm = false;
 		//function to determine if the "submit" button has been pressed (a form has been submitted)
 		if(isset($_POST["submit"]))
 		{
-
-			include 'connection.php';
+			
 			//fill variables from form
 			$productName = $_POST["productName"];
 			$productDescription = $_POST["productDescription"];
@@ -64,112 +76,116 @@ $validForm = false;
 			validateDescription();
 			validatePrice();
 
-			try {
-				    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-				    // set the PDO error mode to exception
-				    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				    $sql = "INSERT INTO project (product_name, product_description, product_price)
-				    VALUES ('productName', 'productDescription', 'productPrice')";
-				    // use exec() because no results are returned
-				    $conn->exec($sql);
-				    echo "New record created successfully";
-				    }
-				catch(PDOException $e)
-				    {
-				    echo $sql . "<br>" . $e->getMessage();
-				    }
-
-				$conn = null;
-
 		}
 
-		$verify_url = 'https://www.google.com/recaptcha/api/siteverify';
-		$args = array('secret' => '6LeAIFYUAAAAACPowlK1PHPty644Jw36gFTdXeKY',
-			'response' => $_POST['g-recaptcha'],
-			'remoteip' => $_SERVER['REMOTE_ADDR']);
-		$request_url = $verify_url.'?'.http_build_query($args);
+		try{
+			$result = $conn->prepare("INSERT INTO project (product_name, product_description, product_price) VALUES (:productName, :productDescription, :productPrice)");
+			$result->bindParam(':productName', $productName);
+			$result->bindParam(':productDescription', $productDescription);
+			$result->bindParam(':productPrice', $productPrice);
+
+
+
+			$result->execute();
 		
-			// a JSON object is returned
-					$response = file_get_contents($request_url);
-					
-			// decode the information
-			$json = json_decode($response, true); // true decodes it to an array instead of a PHP object
 
-
-
-			// handle the response
-			if($recaptcha['success'] == 1) {
-				// run code on successful reCAPTCHA
-			} else {
-				// run code on unsuccessful reCAPTCHA
-			}
+			$displayMsg = "Product added";
+		}
+		catch(PDOException $e){
+			$displayErrorMsg = "IT didn't work";
+		}
+		$conn = null;
 
 		?>
 
 		<!DOCTYPE html>
 		<html>
-		<head>
+		
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-			<title>WDV 341: Form Page for Events</title>
+    <title>Freelancer - Start Bootstrap Theme</title>
 
-			<script src='https://www.google.com/recaptcha/api.js'></script>
-			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-			<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-			<style>
+    <!-- Custom fonts for this template -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
 
-			#container  {
-				width:600px;
-				background-color:#CF9;
-			}
+    <!-- Plugin CSS -->
+    <link href="vendor/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css">
 
-			.error  {
-				color:red;
-				font-style:italic;  
-			}
-		</style>
+    <!-- Custom styles for this template -->
+    <link href="css/freelancer.min.css" rel="stylesheet">
+</head>
+<body id="page-top">
 
-	</head>
-	<body>
-
-		<?php
-	//if form is valid, print confirmation page and sent form information to wdv341 database
-	
-	
-			?>
-			<div id="container">
-				<h1>product Submitted</h1>
-				<p> <a href="selectProducts.php"> View all products.</a></p>
-			</div>
-			<?php
-		}
-		else
-		{
-			?>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">Friendly Barber</a>
+        <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="main.php">Portfolio</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#about">About</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="contactForm.html">Contact</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="login.php">login</a>
+            </li>
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="logout.php">logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+			
+			
 			<!-- FORM -->
+			<!-- Header  Displays the table-->
+    	<header class="masthead bg-primary text-white text-center">
 			<div id="container">
-				<h1 >WDV 341: Form Page for Events</h1>
+				<h1 >Add a product</h1>
 
 				<form name="form1" method="post" action="addProduct.php">
-					<p>Product Name:<br> <span class="error"><?php echo$productNameError?></span><input type="text" name="productName" id="productName" value="<?php echo$productName?>"></p>
+					<p>Product Name:<br> <span class="error"><?php echo$productNameError?></span><input type="text" name="productName" id="productName" value="<?php echo$productName;?>"></p>
 
-					<p>Product Description:<br><span class="error"><?php echo$productDescriptionError?></span><textarea name="productDescription" id="productDescription" cols="45" rows="5"><?php echo$productDescription?></textarea></p>
-
-
-					<p>Product Price:<br><span class="error"><?php echo$productPriceError?></span><input type="number" name="productPrice" id="productPrice" value="<?php echo$productPrice?>"></p>
-
-					<p>
-					<div class="g-recaptcha" data-sitekey="6LeAIFYUAAAAACVyI_xUk1ePfihhR4Ka0ODG-syk"></div>
-					<p> <a href="selectProducts.php"> View all events.</a></p>
+					<p>Product Description:<br><span class="error"><?php echo$productDescriptionError?></span><input type="text" name="productDescription" id="productDescription" cols ="45" rows = "6" value="<?php echo$productDescription;?>"></p>
 
 
-					<p><input type="submit" name="submit" value="Submit Information">
-						<input type="reset" name="reset" value="Reset Information">
+					<p>Product Price:<br><span class="error"><?php echo$productPriceError?></span><input type="number" name="productPrice" id="productPrice" value="<?php echo$productPrice;?>"></p>
+
+			
+					<p><button><a href="selectProduct.php"> View all products.</a></button></p>
+
+
+					<p><input type="submit" name="submit" value="Submit Information"></p>
+					<p>	<input type="reset" name="reset" value="Reset Information"></p>
 
 					</form>
 				</div>
-				<?php
-			}
-			?>
+			</header>
+<?php
+		}
+		else{
+		header('location: login.php');
+	}
+	?>
+
 		</body>
 		</html>
