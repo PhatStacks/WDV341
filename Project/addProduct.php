@@ -10,6 +10,8 @@ $productNameError = "";
 $productDescriptionError = "";
 $productPriceError = "";
 
+	include 'connection.php';
+
 	//variable to determine if form is valid( initially set to "false" to return an invalid (initally blank) form)
 $validForm = false;
 //form validation functions
@@ -47,6 +49,8 @@ $validForm = false;
 		//function to determine if the "submit" button has been pressed (a form has been submitted)
 		if(isset($_POST["submit"]))
 		{
+
+			include 'connection.php';
 			//fill variables from form
 			$productName = $_POST["productName"];
 			$productDescription = $_POST["productDescription"];
@@ -59,6 +63,23 @@ $validForm = false;
 			validateName();
 			validateDescription();
 			validatePrice();
+
+			try {
+				    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+				    // set the PDO error mode to exception
+				    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				    $sql = "INSERT INTO project (product_name, product_description, product_price)
+				    VALUES ('productName', 'productDescription', 'productPrice')";
+				    // use exec() because no results are returned
+				    $conn->exec($sql);
+				    echo "New record created successfully";
+				    }
+				catch(PDOException $e)
+				    {
+				    echo $sql . "<br>" . $e->getMessage();
+				    }
+
+				$conn = null;
 
 		}
 
@@ -113,33 +134,7 @@ $validForm = false;
 
 		<?php
 	//if form is valid, print confirmation page and sent form information to wdv341 database
-		if($validForm)
-		{
-			$hostname = "localhost";
-			$username = "root";
-			$password = "";
-			$database = "wdv341";
-			
-			try 
-			{
-				$conn = new PDO("mysql:host=$hostname;dbname=$database", $username, $password);
-				$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				
-				$stmt = $conn->prepare("INSERT INTO project (product_name, product_description, product_price) VALUES(:productName, :productDescription, :productPrice)");
-				
-				$stmt->bindParam(':productName', $productName);
-				$stmt->bindParam(':productDescription', $productDescription);
-				$stmt->bindParam(':productPrice', $productPrice);
-				
-				$stmt->execute();
-			}
-			catch(PDOException $e)
-			{
-				echo "Error: " . $e->getMessage();
-			}
-			
-			$conn = null;
-		}
+	
 	
 			?>
 			<div id="container">
